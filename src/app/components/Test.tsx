@@ -17,12 +17,6 @@ export default function Test() {
     <>
       <h1>Count: {count}</h1>
       <button
-        // style={{
-        //   border: "1px white solid",
-        //   borderRadius: "5px",
-        //   padding: "5px",
-        //   margin: "5px",
-        // }}
         className="border-2 rounded m-1 p-1 hover:bg-blue-950 active:bg-blue-400 active:scale-90 transition-all"
         onClick={() => {
           setCount((count) => {

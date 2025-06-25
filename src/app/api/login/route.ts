@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   return new Response("todo: implement something here");
 }
