@@ -7,7 +7,6 @@ type Todo = {
   id: number;
   text: string;
   completed: boolean;
-  selected: boolean;
   todos: Todo[];
 };
 
@@ -57,15 +56,12 @@ export default function Home() {
   const [selectedPath, setSelectedPath] = useState([1]);
 
   const onTodoClicked = (col: number, id: number) => {
+    console.log(id);
     setSelectedPath((path) => {
-      path[col] = id;
-      return path;
+      const newPath = [...path];
+      newPath[col] = id;
+      return newPath;
     });
-    updateSelectedTodos(selectedPath);
-  };
-
-  const updateSelectedTodos = (path: number[]) => {
-    todos.forEach((todo) => {});
   };
 
   const buildColumns = (
