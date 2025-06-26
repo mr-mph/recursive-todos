@@ -1,9 +1,43 @@
 {
-  "users": [
+  "todos": [
     {
-      "username": "bob",
-      "password": "password123",
-      "count": 0
+      "id": 0,
+      "text": "do something",
+      "completed": false,
+      "todos": [
+        {
+          "id": 0,
+          "text": "part 1",
+          "completed": false,
+          "todos": [
+            {
+              "id": 0,
+              "text": "part 1a",
+              "completed": false,
+              "todos": []
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "text": "part 2",
+          "completed": false,
+          "todos": []
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "text": "do another thing",
+      "completed": false,
+      "todos": [
+        {
+          "id": 0,
+          "text": "another part 1",
+          "completed": false,
+          "todos": []
+        }
+      ]
     }
   ]
 }

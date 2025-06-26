@@ -3,10 +3,11 @@ import { ChangeEvent, useState } from "react";
 
 interface TodoProps {
   completed: boolean;
-  id: number;
+  id: string;
   col: number;
   selected: boolean;
-  onTodoClicked: (col: number, id: number) => void;
+  onTodoClicked: (col: number, id: string) => void;
+  onChecked: (id: string, val: boolean) => void;
   children: React.ReactNode; // passed in todo el text
 }
 
@@ -16,16 +17,15 @@ export default function Todo({
   col,
   selected,
   onTodoClicked,
+  onChecked,
   children,
 }: TodoProps) {
-  const [checked, setChecked] = useState(false);
-
   const handleClick = () => {
     onTodoClicked(col, id);
   };
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    setChecked(e.target.checked);
+    onChecked(id, e.target.checked);
   };
 
   return (
@@ -34,7 +34,12 @@ export default function Todo({
         selected ? "border-green-400" : "border-red-400"
       }`}
     >
-      <input className="mx-3" type="checkbox" onChange={handleCheck} />
+      <input
+        className="mx-3"
+        type="checkbox"
+        onChange={handleCheck}
+        checked={completed}
+      />
 
       <div className="border-1 w-full" role="button" onClick={handleClick}>
         {children}
