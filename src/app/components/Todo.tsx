@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FocusEvent, KeyboardEvent, useState } from "react";
 
 interface TodoProps {
   completed: boolean;
@@ -7,8 +7,8 @@ interface TodoProps {
   col: number;
   selected: boolean;
   onTodoClicked: (col: number, id: string) => void;
-  onChecked: (id: string, val: boolean) => void;
-  children: React.ReactNode; // passed in todo el text
+  onEdited: (id: string, checked: boolean, text: string) => void;
+  text: string;
 }
 
 export default function Todo({
@@ -17,20 +17,32 @@ export default function Todo({
   col,
   selected,
   onTodoClicked,
-  onChecked,
-  children,
+  onEdited,
+  text,
 }: TodoProps) {
+  // const [editing, setEditing] = useState(false);
+
+  const onUnfocus = (e: FocusEvent<HTMLInputElement>) => {
+    onEdited(id, completed, e.target.value);
+  };
+
   const handleClick = () => {
     onTodoClicked(col, id);
   };
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    onChecked(id, e.target.checked);
+    onEdited(id, e.target.checked, text);
+  };
+
+  const detectEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    }
   };
 
   return (
     <div
-      className={`flex border-1 w-40 hover:border-white ${
+      className={`flex border-1 hover:bg-gray-800 ${
         selected ? "border-green-400" : "border-red-400"
       }`}
     >
@@ -40,10 +52,13 @@ export default function Todo({
         onChange={handleCheck}
         checked={completed}
       />
-
-      <div className="border-1 w-full" role="button" onClick={handleClick}>
-        {children}
-      </div>
+      <input
+        className="border-1 w-full"
+        onClick={handleClick}
+        defaultValue={text}
+        onKeyDown={detectEnter}
+        onBlur={onUnfocus}
+      />
     </div>
   );
 }

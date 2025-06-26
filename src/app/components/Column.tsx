@@ -5,9 +5,15 @@ type ColumnProps = {
   children: React.ReactNode;
   parentTodo: TodoItem | null;
   addTodo: (text: string, parentid: string) => void;
+  width: number;
 };
 
-export default function Column({ children, parentTodo, addTodo }: ColumnProps) {
+export default function Column({
+  children,
+  parentTodo,
+  addTodo,
+  width,
+}: ColumnProps) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const text = e.currentTarget.text.value;
@@ -17,13 +23,16 @@ export default function Column({ children, parentTodo, addTodo }: ColumnProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div
+      className={"flex flex-col gap-4 shrink-0"}
+      style={{ width: `${width}px` }}
+    >
       {children}
       <form onSubmit={handleSubmit}>
         <input
           name="text"
           placeholder="add new todo"
-          className="flex border-1 h-8 w-40 px-3 hover:border-white"
+          className="flex border-1 h-8 px-3 hover:border-white w-full"
         ></input>
       </form>
     </div>

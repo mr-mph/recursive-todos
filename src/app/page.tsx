@@ -1,15 +1,16 @@
 "use client";
 import Todo from "./components/Todo";
 import Column from "./components/Column";
+import Divider from "./components/Divider";
 import { nanoid } from "nanoid";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
-export interface TodoItem {
+export type TodoItem = {
   id: string;
   text: string;
   completed: boolean;
   todos: TodoItem[];
-}
+};
 
 const updateTodoById = (
   todos: TodoItem[],
@@ -30,57 +31,42 @@ const updateTodoById = (
   });
 };
 
+const deleteTodoById = (todos: TodoItem[], id: string): TodoItem[] => {
+  return todos.filter((todo) => {
+    if (todo.id === id) {
+      return false;
+    }
+    if (todo.todos.length > 0) {
+      todo.todos = deleteTodoById(todo.todos, id);
+    }
+    return true;
+  });
+};
+
 export default function Home() {
-  const [todos, setTodos] = useState<TodoItem[]>([
-    {
-      id: nanoid(),
-      text: "do something",
-      completed: false,
-      todos: [
-        {
-          id: nanoid(),
-          text: "part 1",
-          completed: false,
-          todos: [
-            {
-              id: nanoid(),
-              text: "part 1a",
-              completed: false,
-              todos: [],
-            },
-          ],
-        },
-        {
-          id: nanoid(),
-          text: "part 2",
-          completed: false,
-          todos: [],
-        },
-      ],
-    },
-    {
-      id: nanoid(),
-      text: "do another thing",
-      completed: false,
-      todos: [
-        {
-          id: nanoid(),
-          text: "another part 1",
-          completed: false,
-          todos: [],
-        },
-      ],
-    },
-  ]);
+  const defaultWidth = 200;
 
+  const [todos, setTodos] = useState<TodoItem[]>([]);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
+  const [columnWidths, setColumnWidths] = useState<number[]>([defaultWidth]);
 
-  const handleCheck = (id: string, val: boolean) => {
+  useEffect(() => {
+    setTodos(JSON.parse(window.localStorage.getItem("todos") || "[]"));
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const handleEdit = (id: string, checked: boolean, text: string) => {
     setTodos((todos) =>
-      updateTodoById(todos, id, (todo) => ({
-        ...todo,
-        completed: val,
-      }))
+      text === ""
+        ? deleteTodoById(todos, id)
+        : updateTodoById(todos, id, (todo) => ({
+            ...todo,
+            completed: checked,
+            text: text,
+          }))
     );
   };
 
@@ -114,42 +100,70 @@ export default function Home() {
     });
   };
 
+  const handleResize = (colIndex: number, deltaX: number) => {
+    setColumnWidths((widths) => {
+      const newWidths = [...widths];
+      while (newWidths.length <= colIndex) {
+        newWidths.push(defaultWidth);
+      }
+      newWidths[colIndex] = Math.max(100, newWidths[colIndex] + deltaX);
+      return newWidths;
+    });
+  };
+
   const buildColumns = (
     parentTodo: TodoItem | null,
     subTodos: TodoItem[],
     path: string[],
     col: number
   ): React.ReactNode => {
+    if (columnWidths.length <= col) {
+      setColumnWidths((widths) => [...widths, defaultWidth]);
+    }
+
+    const currentColumn = (
+      <Column
+        addTodo={addTodo}
+        parentTodo={parentTodo}
+        width={columnWidths[col] || defaultWidth}
+      >
+        {subTodos.map((todo) => (
+          <Todo
+            key={todo.id}
+            id={todo.id}
+            col={col}
+            completed={todo.completed}
+            selected={todo.id === path[col]}
+            onTodoClicked={onTodoClicked}
+            onEdited={handleEdit}
+            text={todo.text}
+          />
+        ))}
+      </Column>
+    );
+
+    const nextColumn =
+      subTodos.find((todo) => todo.id === path[col])?.todos &&
+      buildColumns(
+        subTodos.find((todo) => todo.id === path[col]) || null,
+        subTodos.find((todo) => todo.id === path[col])?.todos || [],
+        path,
+        col + 1
+      );
+
+    if (!nextColumn) return currentColumn;
+
     return (
       <>
-        <Column addTodo={addTodo} parentTodo={parentTodo}>
-          {subTodos.map((todo) => (
-            <Todo
-              key={todo.id}
-              id={todo.id}
-              col={col}
-              completed={todo.completed}
-              selected={todo.id === path[col]}
-              onTodoClicked={onTodoClicked}
-              onChecked={handleCheck}
-            >
-              {todo.text}
-            </Todo>
-          ))}
-        </Column>
-        {subTodos.find((todo) => todo.id === path[col])?.todos &&
-          buildColumns(
-            subTodos.find((todo) => todo.id === path[col]) || null,
-            subTodos.find((todo) => todo.id === path[col])?.todos || [],
-            path,
-            col + 1
-          )}
+        {currentColumn}
+        <Divider onResize={(deltaX) => handleResize(col, deltaX)} />
+        {nextColumn}
       </>
     );
   };
 
   return (
-    <div className="flex flex-row gap-4">
+    <div className="flex flex-row gap-4 overflow-x-auto p-4">
       {buildColumns(null, todos, selectedPath, 0)}
     </div>
   );
