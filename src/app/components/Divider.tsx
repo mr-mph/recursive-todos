@@ -1,15 +1,16 @@
 "use client";
-import { MouseEvent, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 
 interface DividerProps {
-  onResize: (deltaX: number) => void;
+  onResize: (deltaX: number) => number;
 }
 
 export default function Divider({ onResize }: DividerProps) {
   const isDragging = useRef(false);
   const startX = useRef(0);
 
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    document.body.style.userSelect = "none";
     isDragging.current = true;
     startX.current = e.clientX;
     document.body.style.cursor = "col-resize";
@@ -18,8 +19,8 @@ export default function Divider({ onResize }: DividerProps) {
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging.current) return;
     const deltaX = e.clientX - startX.current;
-    onResize(deltaX);
-    startX.current = e.clientX;
+    const appliedDelta = onResize(deltaX);
+    startX.current += appliedDelta;
   };
 
   const handleMouseUp = () => {
@@ -28,13 +29,13 @@ export default function Divider({ onResize }: DividerProps) {
   };
 
   useEffect(() => {
-    document.addEventListener("mousemove", handleMouseMove as any);
+    document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove as any);
+      document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, []);
+  });
 
   return (
     <div

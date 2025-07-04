@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import { TodoItem } from "../page";
+import { TodoItem } from "./RecursiveTodos";
 
 type ColumnProps = {
   children: React.ReactNode;
