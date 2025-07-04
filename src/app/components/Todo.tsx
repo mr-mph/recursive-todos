@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, FocusEvent, KeyboardEvent, useState } from "react";
+import { ChangeEvent, FocusEvent, KeyboardEvent } from "react";
 
 interface TodoProps {
   completed: boolean;
