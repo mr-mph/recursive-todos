@@ -1,4 +1,5 @@
 "use client";
+import { Trash2 } from "lucide-react";
 import { ChangeEvent, FocusEvent, KeyboardEvent } from "react";
 
 interface TodoProps {
@@ -42,22 +43,26 @@ export default function Todo({
 
   return (
     <div
-      className={`flex border-1 hover:bg-gray-800 ${
-        selected ? "border-green-400" : "border-red-400"
+      className={`bg-[#1c1c20] items-center flex border-1 rounded-sm  hover:bg-gray-800 ${
+        selected ? "border-blue-400" : "border-gray-600"
       }`}
     >
       <input
-        className="mx-3"
+        className="mx-3 w-5 h-5 flex-shrink-0 "
         type="checkbox"
         onChange={handleCheck}
         checked={completed}
       />
       <input
-        className="border-1 w-full"
+        className="focus:outline-none focus:border-blue-200 border-1 w-full rounded-sm border-gray-700 m-0.5 px-1 py-0.5 hover:bg-gray-600"
         onClick={handleClick}
         defaultValue={text}
         onKeyDown={detectEnter}
         onBlur={onUnfocus}
+      />
+      <Trash2
+        className="w-8 h-8 m-1 px-1 border-1 rounded-sm border-gray-700 flex-shrink-0 hover:bg-gray-600 active:bg-gray-500"
+        onClick={() => onEdited(id, completed, "")}
       />
     </div>
   );

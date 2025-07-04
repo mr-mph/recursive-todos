@@ -45,7 +45,7 @@ const deleteTodoById = (todos: TodoItem[], id: string): TodoItem[] => {
 
 export default function Todos() {
   const defaultWidth = 200;
-  const minWidth = 100;
+  const minWidth = 150;
 
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
