@@ -8,7 +8,6 @@ export default function NavBar() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Helper function to determine if a route is active
   const isActive = (path: string) => pathname === path;
 
   return (
