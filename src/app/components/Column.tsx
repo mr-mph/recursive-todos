@@ -1,5 +1,6 @@
 import { FormEvent } from "react";
 import { TodoItem } from "../todos/page";
+import { Plus } from "lucide-react";
 
 type ColumnProps = {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export default function Column({
     const text = e.currentTarget.text.value;
     e.currentTarget.text.value = "";
     const parentid = parentTodo?.id || "root";
+
     addTodo(text, parentid);
   };
 
@@ -31,12 +33,19 @@ export default function Column({
       style={{ width: `${width}px` }}
     >
       {children}
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        className="border-gray-600 bg-[#1c1c20] items-center flex border-1 rounded-sm  hover:bg-gray-800"
+      >
         <input
+          id="myinput"
           name="text"
           placeholder="add new todo"
-          className="bg-[#1c1c20] focus:outline-none focus:border-blue-200 flex border-1 rounded-sm h-8 px-3 hover:bg-gray-800 w-full border-gray-600"
+          className="pl-1 ml-1.5 focus:outline-none focus:border-blue-200 border-1 w-full rounded-sm border-gray-700 m-0.5 px-1 py-0.5 hover:bg-gray-600"
         ></input>
+        <button type="submit">
+          <Plus className="w-8 h-8 m-1 px-1 border-1 rounded-sm border-gray-700 flex-shrink-0 hover:bg-gray-600 active:bg-gray-500" />
+        </button>
       </form>
     </div>
   );

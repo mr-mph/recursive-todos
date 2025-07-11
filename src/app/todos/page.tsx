@@ -73,6 +73,13 @@ export default function Todos() {
     }
   }, [selectedPath.length, columnWidths.length]);
 
+  useEffect(() => {
+    const input = document.getElementById("myinput");
+    if (input) {
+      input.focus();
+    }
+  }, []);
+
   const handleEdit = (id: string, checked: boolean, text: string) => {
     setTodos((todos) =>
       text === ""
