@@ -1,4 +1,5 @@
-import { FormEvent } from "react";
+"use client";
+import { FormEvent, useEffect, useState } from "react";
 import { TodoItem } from "../todos/page";
 import { Plus } from "lucide-react";
 
@@ -15,6 +16,19 @@ export default function Column({
   addTodo,
   width,
 }: ColumnProps) {
+  const [suggestion, setSuggestion] = useState<string>("add a todo...");
+
+  useEffect(() => {
+    getNewSuggestion();
+  }, []);
+
+  const getNewSuggestion = () => {
+    setSuggestion("add a todo...");
+    fetch("/api/suggestion")
+      .then((res) => res.json())
+      .then((data) => setSuggestion(data.activity.toLowerCase()));
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (e.currentTarget.text.value === "") return;
@@ -23,6 +37,7 @@ export default function Column({
     const parentid = parentTodo?.id || "root";
 
     addTodo(text, parentid);
+    getNewSuggestion();
   };
 
   return (
@@ -40,7 +55,7 @@ export default function Column({
         <input
           id="myinput"
           name="text"
-          placeholder="add new todo"
+          placeholder={suggestion}
           className="pl-1 ml-1.5 focus:outline-none focus:border-blue-200 border-1 w-full rounded-sm border-gray-700 m-0.5 px-1 py-0.5 hover:bg-gray-600"
         ></input>
         <button type="submit">
